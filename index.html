@@ -1,1 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDYS / Netscapes</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #808080;
+            height: 100%;
+            overflow: hidden;
+        }
+        .browser-window {
+            width: 100%;
+            height: 100%;
+            background-color: #c0c0c0;
+            display: flex;
+            flex-direction: column;
+        }
+        .title-bar {
+            background-color: #000080;
+            color: white;
+            padding: 2px 5px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .window-controls {
+            display: flex;
+        }
+        .window-button {
+            width: 16px;
+            height: 14px;
+            background-color: #c0c0c0;
+            border: 2px outset #ffffff;
+            margin-left: 2px;
+        }
+        .menu-bar, .toolbar {
+            background-color: #c0c0c0;
+            padding: 2px 5px;
+            border-bottom: 1px solid #808080;
+        }
+        .menu-bar span {
+            margin-right: 15px;
+        }
+        .toolbar-button {
+            display: inline-block;
+            padding: 2px 5px;
+            margin-right: 5px;
+            background-color: #c0c0c0;
+            border: 2px outset #ffffff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .address-bar {
+            background-color: #ffffff;
+            padding: 2px 5px;
+            border: 2px inset #808080;
+            margin: 2px 5px;
+            display: flex;
+        }
+        #urlInput {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+        }
+        #goButton {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #ffffff;
+            margin: 0 2px 2px;
+            border: 2px inset #808080;
+            overflow: hidden;
+        }
+        #websiteFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #clock {
+            font-family: 'Courier New', monospace;
+            background-color: #c0c0c0;
+            border: 2px inset #ffffff;
+            padding: 2px 5px;
+        }
+        .status-bar {
+            background-color: #c0c0c0;
+            padding: 2px 5px;
+            border-top: 1px solid #808080;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid #000;
+            padding: 10px;
+            background-color: #ffffff;
+            z-index: 10;
+        }
+        .popup img {
+            max-width: 300px;
+            max-height: 300px;
+        }
+        .close-btn {
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #c0c0c0;
+            border: 1px solid #000;
+            padding: 2px 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-window">
+        <div class="title-bar">
+            <span>IDYS / Netscapes</span>
+            <div class="window-controls">
+                <div class="window-button"></div>
+                <div class="window-button"></div>
+                <div class="window-button"></div>
+            </div>
+        </div>
+        <div class="menu-bar">
+            <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Bookmarks</span><span>Options</span><span>Directory</span><span>Window</span><span>Help</span>
+        </div>
+        <div class="toolbar">
+            <span class="toolbar-button" id="backButton">Back</span>
+            <span class="toolbar-button" id="forwardButton">Forward</span>
+            <span class="toolbar-button" id="homeButton">Home</span>
+            <span class="toolbar-button" id="reloadButton">Reload</span>
+            <span class="toolbar-button" onclick="showPopup('imagesPopup')">Images</span>
+            <span class="toolbar-button" onclick="showPopup('openPopup')">Open</span>
+            <span class="toolbar-button" onclick="showPopup('printPopup')">Print</span>
+            <span class="toolbar-button" onclick="showPopup('findPopup')">Find</span>
+            <span class="toolbar-button" onclick="showPopup('stopPopup')">Stop</span>
+        </div>
+        <div class="address-bar">
+            <input type="text" id="urlInput" value="https://example.com/">
+            <button id="goButton">Go</button>
+        </div>
+        <div class="content">
+            <iframe id="websiteFrame" src="https://example.com/"></iframe>
+        </div>
+        <div class="status-bar">
+            <span id="statusMessage">Enjoy browsing !</span>
+            <span id="clock"></span>
+        </div>
 
+        <div id="imagesPopup" class="popup">
+            <img src="https://cdn.glitch.global/af1c5efe-820b-4738-8c8e-bcfdcb8287b2/images.gif?v=1725345366994" alt="Images">
+            <button class="close-btn" onclick="hidePopup('imagesPopup')">Close</button>
+        </div>
+        <div id="openPopup" class="popup">
+            <img src="https://cdn.glitch.global/af1c5efe-820b-4738-8c8e-bcfdcb8287b2/open.gif?v=1725345381143" alt="Open">
+            <button class="close-btn" onclick="hidePopup('openPopup')">Close</button>
+        </div>
+        <div id="printPopup" class="popup">
+            <img src="https://cdn.glitch.global/af1c5efe-820b-4738-8c8e-bcfdcb8287b2/print.gif?v=1725345357400" alt="Print">
+            <button class="close-btn" onclick="hidePopup('printPopup')">Close</button>
+        </div>
+        <div id="findPopup" class="popup">
+            <img src="https://cdn.glitch.global/af1c5efe-820b-4738-8c8e-bcfdcb8287b2/find.gif?v=1725345386029" alt="Find">
+            <button class="close-btn" onclick="hidePopup('findPopup')">Close</button>
+        </div>
+        <div id="stopPopup" class="popup">
+            <img src="https://cdn.glitch.global/af1c5efe-820b-4738-8c8e-bcfdcb8287b2/stop.gif?v=1725345391421" alt="Stop">
+            <button class="close-btn" onclick="hidePopup('stopPopup')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const frame = document.getElementById('websiteFrame');
+        const urlInput = document.getElementById('urlInput');
+        const statusMessage = document.getElementById('statusMessage');
+        let homeUrl = "https://example.com/";
+        let history = [homeUrl];
+        let currentIndex = 0;
+
+        function updateClock() {
+            const now = new Date();
+            const options = {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const timeString = now.toLocaleTimeString('en-US', options);
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        function loadWebsite(url) {
+            statusMessage.textContent = "Loading...";
+            frame.src = url;
+            urlInput.value = url;
+            if (url !== history[currentIndex]) {
+                currentIndex++;
+                history = history.slice(0, currentIndex);
+                history.push(url);
+            }
+        }
+
+        function goBack() {
+            if (currentIndex > 0) {
+                statusMessage.textContent = "Going back...";
+                currentIndex--;
+                const previousUrl = history[currentIndex];
+                frame.src = previousUrl;
+                urlInput.value = previousUrl;
+            }
+        }
+
+        function goForward() {
+            if (currentIndex < history.length - 1) {
+                statusMessage.textContent = "Going forward...";
+                currentIndex++;
+                const nextUrl = history[currentIndex];
+                frame.src = nextUrl;
+                urlInput.value = nextUrl;
+            }
+        }
+
+        function goHome() {
+            loadWebsite(homeUrl);
+        }
+
+        function reloadPage() {
+            statusMessage.textContent = "Reloading...";
+            frame.src = frame.src;
+        }
+
+        function stopLoading() {
+            statusMessage.textContent = "Stopped";
+            frame.contentWindow.stop();
+        }
+
+        function showPopup(popupId) {
+            document.getElementById(popupId).style.display = 'block';
+        }
+
+        function hidePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        document.getElementById('goButton').addEventListener('click', () => loadWebsite(urlInput.value));
+        document.getElementById('backButton').addEventListener('click', goBack);
+        document.getElementById('forwardButton').addEventListener('click', goForward);
+        document.getElementById('homeButton').addEventListener('click', goHome);
+        document.getElementById('reloadButton').addEventListener('click', reloadPage);
+        document.getElementById('stopButton').addEventListener('click', stopLoading);
+
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadWebsite(urlInput.value);
+            }
+        });
+
+        frame.addEventListener('load', function() {
+            statusMessage.textContent = "Loaded";
+            urlInput.value = frame.contentWindow.location.href;
+        });
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
